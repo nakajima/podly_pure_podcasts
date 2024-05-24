@@ -4,6 +4,8 @@ services:
       context: .
     ports:
       - 5001:5001
+    volumes:
+      - ./processing:/app/processing
     deploy:
       resources:
         reservations:

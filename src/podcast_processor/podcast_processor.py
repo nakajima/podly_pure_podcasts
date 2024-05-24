@@ -80,7 +80,7 @@ class PodcastProcessor:
             )
             self.classify(
                 transcript,
-                env.OPENAI_MODEL_NAME or "gpt-4o",
+                env["OPENAI_MODEL_NAME"] or "gpt-4o",
                 self.config["processing"]["system_prompt"],
                 user_prompt_template,
                 self.config["processing"]["num_segments_to_input_to_prompt"],
@@ -135,7 +135,7 @@ class PodcastProcessor:
         self.logger.info(f"Available models: {models}")
 
         model = whisper.load_model(
-            name=env.WHISPER_MODEL or "base",
+            name=env["WHISPER_MODEL"] or "base",
         )
 
         self.logger.info("Beginning transcription")
@@ -215,8 +215,8 @@ class PodcastProcessor:
         # log the request
         self.logger.info(f"Calling model: {model}")
         client = OpenAI(
-            base_url=env.OPENAI_BASE_URL or "https://api.openai.com/v1",
-            api_key=env.OPENAI_API_KEY,
+            base_url=env['OPENAI_BASE_URL'] or "https://api.openai.com/v1",
+            api_key=env['OPENAI_API_KEY']
         )
         response = client.chat.completions.create(
             model=model,
@@ -224,8 +224,8 @@ class PodcastProcessor:
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt},
             ],
-            max_tokens=env.OPENAI_MAX_TOKENS,
-            timeout=env.OPENAI_TIMEOUT,
+            max_tokens=int(env['OPENAI_MAX_TOKENS']),
+            timeout=int(env['OPENAI_TIMEOUT']),
         )
 
         return response.choices[0].message.content
